@@ -4,15 +4,22 @@ namespace App\Http\Livewire\Video;
 
 use App\Models\Video;
 use Livewire\Component;
+use Livewire\WithPagination;
+use Storage;
 
 class AllVideo extends Component
 {
-    public Video $video;
-    public function mount(Video $video){
-        $this->video = $video;
-    }
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
     public function render()
     {
-        return view('livewire.video.all-video')->extends('main');
+        return view('livewire.video.all-video',['videos'=>Video::paginate(10)])->extends('main');
+    }
+    public function delete($id)
+    {
+        $v = Video::find($id);
+        Storage::disk('videos')->deleteDirectory($v->description);
+        Video::destroy($id);
+        
     }
 }

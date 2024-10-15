@@ -12,17 +12,13 @@ class EditVideo extends Component
         'video.title'=>'required|max:255',
         'video.description'=>'required|max:255',
         'video.visibility'=>'required',
-        'processed_file' => 'required'
 
     ];
     public function render()
     {
         return view('livewire.video.edit-video')->extends('main');
     }
-    public function mount($video)
-    {
-        $this->video = $video;
-    }
+    
     public function update(Video $video)
     {
         $this->validate();

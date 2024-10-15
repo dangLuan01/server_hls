@@ -25,13 +25,14 @@ class CreateVideo extends Component
     {
         // $this->validate();
         $path= $this->videoFile->store('videos-temp');
+        $uid = uniqid(true);
         $this -> video = Video::create([
 
             'title'=>'untitle',
 
-            'description'=>'none',
+            'description'=>$uid.now()->format('Y-m-d'),
 
-            'uid'=>uniqid(true),
+            'uid'=>$uid,
 
             'visibility'=>'public',
 

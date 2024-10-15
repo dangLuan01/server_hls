@@ -1,0 +1,3 @@
+//chạy job nếu không sẽ không chạy hàm convert hls
+//khi up hosting bắt buộc phải chạy cho lần đầu tiên
+cmd: php artisan queue:work --tries=3

@@ -13,7 +13,7 @@ class AllVideo extends Component
     protected $paginationTheme = 'bootstrap';
     public function render()
     {
-        return view('livewire.video.all-video',['videos'=>Video::paginate(10)])->extends('main');
+        return view('livewire.video.all-video',['videos'=>Video::orderBy('created_at','DESC')->paginate(100)])->extends('main');
     }
     public function delete($id)
     {

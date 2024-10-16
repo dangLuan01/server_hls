@@ -2,9 +2,10 @@
     x-on:livewire-upload-finish="isUploading = false , $wire.fileCompleted()"
     x-on:livewire-upload-error="isUploading = false" x-on:livewire-upload-progress="progress = $event.detail.progress">
     <div class="mb-3">
-        <div class="progress" x-show="isUploading">
-            <div class="progress-bar progress-bar-striped bg-success" role="progressbar"
-                x-bind:style="'width: ' + progress + '%'">
+        <div x-show="isUploading">
+            <h4 class="small font-weight-bold">Upload Video <span class="float-right" x-text="progress + '%'"></span></h4>
+            <div class="progress mb-4">
+                <div class="progress-bar" role="progressbar" x-bind:style="'width: ' + progress + '%'"></div>
             </div>
         </div>
 
@@ -22,10 +23,7 @@
     @enderror
     @php
     $uploadMaxFilesize = ini_get('upload_max_filesize');
-    $postMaxSize = ini_get('post_max_size');
-
     echo "Max upload file size: $uploadMaxFilesize";
-    echo "Max post size: $postMaxSize";
     @endphp
-    
+
 </div>

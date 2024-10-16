@@ -39,18 +39,16 @@ class VideoEncode extends Command
      */
     public function handle()
     {
-        // $low = (new X264('aac'))->setKiloBitrate(500);
-        // $high = (new X264('aac'))->setKiloBitrate(1000);
-        // FFMpeg::fromDisk('videos-temp')
-        // ->open('test.mp4')
-        // ->exportForHLS()->addFormat($low,function($filters){
-        //     $filters->resize(640,480);
-        // })->addFormat($high,function($filters){
-        //     $filters->resize(1280,720);
-        // })->toDisk('videos-temp')
-        // ->onProgress(function($progress){
-        //     $this->info("Progress={$progress}%");
-        // })
-        // ->save('/hls/master.m3u8');
+        $low = (new X264('aac'))->setKiloBitrate(2500);
+        // $high = (new X264('aac'))->setKiloBitrate(3000);
+        FFMpeg::fromDisk('videos-temp')
+        ->open('test.mp4')
+        ->exportForHLS()
+        ->addFormat($low)
+        ->toDisk('videos-temp')
+        ->onProgress(function($progress){
+            $this->info("Progress={$progress}%");
+        })
+        ->save('/hls/master.m3u8');
     }
 }

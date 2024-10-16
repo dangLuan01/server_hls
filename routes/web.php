@@ -3,6 +3,7 @@
 use App\Http\Livewire\Video\AllVideo;
 use App\Http\Livewire\Video\CreateVideo;
 use App\Http\Livewire\Video\EditVideo;
+use App\Http\Livewire\Video\ShowVideo;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('main');
 });
+
 Route::get('/videos/create',CreateVideo::class)->name('video.create');
 Route::get('/videos/{video}/edit',EditVideo::class)->name('video.edit');
 Route::get('/videos/all',AllVideo::class)->name('video.all');
+Route::get('/videos/tiktok',ShowVideo::class)->name('video.tiktok');

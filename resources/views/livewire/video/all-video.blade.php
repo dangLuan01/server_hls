@@ -66,7 +66,7 @@
     </div>
 
 </div>
-<script src="https://cdn.tutorialjinni.com/hls.js/1.2.1/hls.min.js"></script>
+{{-- <script src="https://cdn.tutorialjinni.com/hls.js/1.2.1/hls.min.js"></script>
 <script>
     if (Hls.isSupported()) {
       var video = document.getElementById('video');
@@ -76,5 +76,5 @@
     }else{
         alert("Cannot stream HLS, use another video source");
     }
-</script>
+</script> --}}
 <!-- /.container-fluid -->

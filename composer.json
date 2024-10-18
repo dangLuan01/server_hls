@@ -11,10 +11,13 @@
         "php": "^7.3",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",
+        "google/apiclient": "^2.16",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.0",
         "laravel/tinker": "^2.0",
+        "laravel/ui": "*",
         "livewire/livewire": "^2.12",
+        "nao-pon/flysystem-google-drive": "~1.1",
         "pbmedia/laravel-ffmpeg": "^7.8"
     },
     "require-dev": {

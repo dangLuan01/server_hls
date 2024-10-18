@@ -39,12 +39,13 @@ class VideoEncode extends Command
      */
     public function handle()
     {
-        $low = (new X264('aac'))->setKiloBitrate(2500);
-        // $high = (new X264('aac'))->setKiloBitrate(3000);
+        // $low = (new X264('aac'))->setKiloBitrate(2500);
+        $high = (new X264('aac'))->setKiloBitrate(3000);
         FFMpeg::fromDisk('videos-temp')
-        ->open('test.mp4')
+        ->open('the.wild.robot.2024.1080p.web.h264-scrupulousslyearwigofmaturity_MutiAudio.mkv')
+        
         ->exportForHLS()
-        ->addFormat($low)
+        ->addFormat($high)
         ->toDisk('videos-temp')
         ->onProgress(function($progress){
             $this->info("Progress={$progress}%");

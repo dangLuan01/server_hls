@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\VideoController;
 use App\Http\Livewire\Video\AllVideo;
 use App\Http\Livewire\Video\CreateVideo;
 use App\Http\Livewire\Video\EditVideo;
 use App\Http\Livewire\Video\ShowVideo;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,11 +20,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home')->extends('main');
+Route::middleware('auth')->group(function () {
+    Route::get('/', [VideoController::class,'index'])->name('home');
+    Route::get('/videos/create',CreateVideo::class)->name('video.create');
+    Route::get('/videos/{video}/edit',EditVideo::class)->name('video.edit');
+    Route::get('/videos/all',AllVideo::class)->name('video.all');
 });
+Route::get('logout', [LoginController::class, 'logout']);
 
-Route::get('/videos/create',CreateVideo::class)->name('video.create');
-Route::get('/videos/{video}/edit',EditVideo::class)->name('video.edit');
-Route::get('/videos/all',AllVideo::class)->name('video.all');
 Route::get('/videos/tiktok',ShowVideo::class)->name('video.tiktok');
+
+Auth::routes();

@@ -10,9 +10,9 @@
         </div>
 
         <br>
-        <form x-show="!isUploading">
-            <label for="exampleFormControlTextarea1" class="form-label">Upload</label>
-            <input type="file" wire:model="videoFile">
+        <form x-show="!isUploading" class="">
+            <label for="exampleFormControlTextarea1" class="form-label">Select File Upload (support: mp4,mkv,mov,ts)</label>
+            <input class="form-control" type="file" wire:model="videoFile">
         </form>
     </div>
     @error('videoFile')

@@ -2,7 +2,7 @@
         
         <form wire:submit.prevent="update">
             <div class="mb-3">
-                <label for="exampleFormControlInput1" class="form-label">EnCoding</label>
+                <label for="exampleFormControlInput1" class="form-label">@if($this->video->processing_precentage <100) EnCodeing @else Encoded @endif</label>
                 <div class="row no-gutters align-items-center">
                     <div class="col-auto">
                         <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $this->video->processing_precentage }}%</div>
@@ -16,7 +16,7 @@
                 </div>
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Name</label>
-                <input type="text" class="form-control" id="exampleFormControlInput1" wire:model="video.title">
+                <input type="text" class="form-control form-control-sm" id="exampleFormControlInput1" wire:model="video.title">
             </div>
             @error('video.title')
             <div class="alert alert-danger">{{ $message }}</div>

@@ -15,7 +15,7 @@ class CreateVideo extends Component
     public Video $video;
     public $videoFile;
     protected $rules = [
-        'videoFile' => 'max:204800|mimes:mp4,mkv'  
+        'videoFile' => 'mimes:mp4,mkv'  
     ];
     public function render()
     {
@@ -23,14 +23,15 @@ class CreateVideo extends Component
     }
     public function fileCompleted()
     {
-        // $this->validate();
+        $this->validate();
         $path= $this->videoFile->store('videos-temp');
+        $originalName = pathinfo($this->videoFile->getClientOriginalName(), PATHINFO_FILENAME); 
         $uid = uniqid(true);
         $this -> video = Video::create([
 
-            'title'=>'untitle',
+            'title'=>$originalName,
 
-            'description'=>$uid.now()->format('Y-m-d'),
+            'description'=>$originalName.'-'.now()->format('Y-m-d'),
 
             'uid'=>$uid,
 

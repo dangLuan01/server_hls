@@ -31,7 +31,7 @@ class CreateVideo extends Component
 
             'title'=>$originalName,
 
-            'description'=>$originalName.'-'.now()->format('Y-m-d'),
+            'description'=>$uid.now()->format('Y-m-d'),
 
             'uid'=>$uid,
 

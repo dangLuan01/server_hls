@@ -35,7 +35,7 @@
                     </tfoot>
                     <tbody>
                         @foreach ($videos as $key => $video)
-                        <tr>
+                        <tr id="video{{ $video->id }}">
                             <th scope="row">{{ $key + 1 }}</th>
                             <td>{{ $video->title }}</td>
                             <td>{{ asset('/videos'.$video->processed_file) }}</td>
@@ -45,18 +45,19 @@
                                 </video>
                             </td>
                             <td>{{ $video->created_at }}</td>
-                            @if($video->processing_precentage < 100)
-                            <td><a href="{{ route('video.edit', $video->uid) }}"><button
-                                class="btn btn-warning">EDIT</button></a></td>
-                            @else
-                            <td><a href="{{ route('video.edit', $video->uid) }}"><button
-                                class="btn btn-warning">EDIT</button></a>||<button
-                            wire:click="delete({{ $video->id }})" class="btn btn-danger">Delete</button></td>
-                            @endif
-                           
+                            @if($video->processing_precentage < 100) <td><a
+                                    href="{{ route('video.edit', $video->uid) }}"><button
+                                        class="btn btn-warning">EDIT</button></a></td>
+                                @else
+                                <td><a href="{{ route('video.edit', $video->uid) }}"><button
+                                            class="btn btn-warning">EDIT</button></a>||<button
+                                        wire:click="delete({{ $video->id }})" data-id="{{ $video->id }}"
+                                        onclick="deleteVideo(this)" class="btn btn-danger">Delete</button></td>
+                                @endif
+
                         </tr>
                         @endforeach
-                        {{ $videos->links() }}
+                        {{-- {{ $videos->links() }} --}}
                     </tbody>
                 </table>
 
@@ -66,6 +67,14 @@
     </div>
 
 </div>
+<script>
+    function deleteVideo(button) {
+        let videoId = button.getAttribute('data-id');
+        setTimeout(function() {
+            window.location.reload();
+        }, 2000); 
+    }
+</script>
 {{-- <script src="https://cdn.tutorialjinni.com/hls.js/1.2.1/hls.min.js"></script>
 <script>
     if (Hls.isSupported()) {
@@ -77,4 +86,3 @@
         alert("Cannot stream HLS, use another video source");
     }
 </script> --}}
-<!-- /.container-fluid -->

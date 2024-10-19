@@ -27,7 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/videos/all',AllVideo::class)->name('video.all');
 });
 Route::get('logout', [LoginController::class, 'logout']);
-
-Route::get('/videos/tiktok',ShowVideo::class)->name('video.tiktok');
+Route::get('proxy',[ShowVideo::class,'proxy'])->name('video.proxy');
+Route::get('/videos/gdrive',ShowVideo::class)->name('video.gdrive');
 
 Auth::routes();

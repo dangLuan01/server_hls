@@ -1,22 +1,26 @@
 <div @if ($video->processing_precentage < 100) wire:poll @endif class="container">
-        
+
         <form wire:submit.prevent="update">
             <div class="mb-3">
-                <label for="exampleFormControlInput1" class="form-label">@if($this->video->processing_precentage <100) EnCodeing @else Encoded @endif</label>
-                <div class="row no-gutters align-items-center">
-                    <div class="col-auto">
-                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $this->video->processing_precentage }}%</div>
-                    </div>
-                    <div class="col">
-                        <div class="progress progress-sm mr-2">
-                            <div class="progress-bar bg-info" role="progressbar"
-                                style="width: {{ $this->video->processing_precentage }}%"></div>
+                <label for="exampleFormControlInput1" class="form-label">@if($this->video->processing_precentage <100)
+                        EnCodeing @else Encoded @endif</label>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{
+                                    $this->video->processing_precentage }}%</div>
+                            </div>
+                            <div class="col">
+                                <div class="progress progress-sm mr-2">
+                                    <div class="progress-bar bg-info" role="progressbar"
+                                        style="width: {{ $this->video->processing_precentage }}%"></div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+            </div>
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Name</label>
-                <input type="text" class="form-control form-control-sm" id="exampleFormControlInput1" wire:model="video.title">
+                <input type="text" class="form-control form-control-sm" id="exampleFormControlInput1"
+                    wire:model="video.title">
             </div>
             @error('video.title')
             <div class="alert alert-danger">{{ $message }}</div>
@@ -40,7 +44,7 @@
             <div class="mb-3">
                 <button type="submit" class="btn btn-success btn-circle btn-lg"><i class="fas fa-check"></i></button>
             </div>
-           
+
             @if (session()->has('message'))
             <div class="alert alert-success">{{ session('message') }}</div>
             @endif

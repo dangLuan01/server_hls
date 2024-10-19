@@ -39,18 +39,23 @@ class ConvertVideoForStreaming implements ShouldQueue
     public function handle()
     {
         $destination = '/' . $this->video->uid.now()->format('Y-m-d').'/'.$this->video->uid.'.m3u8';
-        $folderVideo = '/' . $this->video->uid.now()->format('Y-m-d');
+        $folderVideo = $this->video->uid.now()->format('Y-m-d');
         
 
-        $low = (new X264('aac'))->setKiloBitrate(2500);
-        $high = (new X264('aac'))->setKiloBitrate(3500);
+        $veryhigh = (new X264('aac'))->setKiloBitrate(3500);
+        $high = (new X264('aac'))->setKiloBitrate(2500);
 
         FFMpeg::fromDisk('videos-temp')
 
         ->open($this->video->path)
 
         ->exportForHLS()
-        ->addFormat($high)
+        ->addFormat($high,function($filters){
+            $filters->resize(1280,720);
+        })
+        ->addFormat($veryhigh,function($filters){
+            $filters->resize(1920,1080);
+        })
         ->toDisk('videos')
 
         ->onProgress(function($progress){
@@ -92,26 +97,34 @@ class ConvertVideoForStreaming implements ShouldQueue
         });
     }
     public function saveToGdrive($folderVideo,$uid){
+        $this->gDrive();
+        Storage::disk('google')->makeDirectory($folderVideo);
+        $folders=Storage::disk('google')->directories();
+        foreach($folders as $first){
+            $detail[] = Storage::disk('google')->getMetadata($first);
+        }   
         $directoryVideo = storage_path('app/videos/' . $folderVideo);
         $files = \File::files($directoryVideo);
-        foreach ($files as $file) {
-            if ($file->getExtension() === 'png') {
-                // Đổi phần mở rộng từ .ts sang .png
-                
-                //////////////
-                $this->gDrive();
-                // Kiểm tra nếu có file upload
+        foreach($detail as $folder){
+            if($folder['name'] == $folderVideo){
+                $folderPath = $folder['path'];
+                foreach ($files as $file) {
+                    if ($file->getExtension() === 'png') {
+
+                           // Lấy tên file và đường dẫn tạm thời của file
+                           $fileName = $file->getFilename();
+                           $filePath = $file->getRealPath();
+                          
+                           // Upload file lên Google Drive
+                           Storage::disk('google')->put($folder['path'].'/'.$fileName, fopen($filePath, 'r+'));
                
-                   // Lấy tên file và đường dẫn tạm thời của file
-                   $fileName = $file->getFilename();
-                   $filePath = $file->getRealPath();
-                  
-                   // Upload file lên Google Drive
-                   Storage::disk('google')->put($fileName, fopen($filePath, 'r+'));
-       
+                    }
+                }
+                
             }
         }
-        $this->updateM3U8Playlist($uid,$folderVideo);
+        $this->updateM3U8Playlist($uid,$folderVideo,$folderPath);
+        
     }
     public function renameTsToPng($uid,$folderVideo)
     {
@@ -132,14 +145,15 @@ class ConvertVideoForStreaming implements ShouldQueue
         // Cập nhật lại file .m3u8 để trỏ tới các file .png
         
     }
-    public function updateM3U8Playlist($uid,$folderVideo)
+    public function updateM3U8Playlist($uid,$folderVideo,$folderPath)
     {
-        $destination = '/' . $folderVideo.'/'.$this->video->uid.'_0_3500.m3u8';
+        $this->gDrive();
+        $destination = '/' . $folderVideo.'/'.$this->video->uid.'_0_2500.m3u8';
         // Đọc nội dung của file .m3u8
         $playlistPath = storage_path('app/videos/' . $destination);
         $playlistContent = \File::get($playlistPath);
-        $this->gDrive();
-        $files=Storage::disk('google')->listContents();
+        
+        $files=Storage::disk('google')->listContents($folderPath);
 
        // Thay đổi tất cả các phần mở rộng từ .ts thành .png trong nội dung của file .m3u8
         $updatedContent = preg_replace_callback('/(' . preg_quote($uid) . '_.*)\.ts/', function($matches) use ($files) {
@@ -147,26 +161,47 @@ class ConvertVideoForStreaming implements ShouldQueue
                 // Kiểm tra nếu tên file từ Google Drive khớp với đoạn tìm kiếm từ .m3u8
                 if (strpos($file['name'], $matches[1]) !== false) {
                     // Tạo URL mới với tên file tương ứng
-                    return 'http://127.0.0.1:8000/proxy?id=' . urlencode($file['path']);
+                    return 'http://127.0.0.1:8000/proxy?id=' . urlencode($file['basename']);
                 }
             }
 
         }, $playlistContent);
         
-
         // Lưu lại file m3u8 với nội dung đã được cập nhật
         \File::put($playlistPath, $updatedContent);
         // PUBLIC FILE
-        $files=Storage::disk('google')->allFiles();
-        foreach($files as $first){
+        $filess=Storage::disk('google')->allFiles($folderPath);
+        foreach($filess as $first){
            Storage::disk('google')->url($first);
         }
         ///////////////////******************************//////////////////////////
+        $destinations = '/' . $folderVideo.'/'.$this->video->uid.'_1_3500.m3u8';
+        // Đọc nội dung của file .m3u8
+        $playlistPaths = storage_path('app/videos/' . $destinations);
+        $playlistContents = \File::get($playlistPaths);
+
+        // Thay đổi tất cả các phần mở rộng từ .ts thành .png trong file .m3u8
+        $updatedContents = preg_replace_callback('/(' . preg_quote($uid) . '_.*)\.ts/', function($matchess) use ($files) {
+            
+            foreach ($files as $file) {
+                // Kiểm tra nếu tên file từ Google Drive khớp với đoạn tìm kiếm từ .m3u8
+                if (strpos($file['name'], $matchess[1]) !== false) {
+                    // Tạo URL mới với tên file tương ứng
+                    return 'http://127.0.0.1:8000/proxy?id=' . urlencode($file['basename']);
+                }
+            }
+          
+        }, $playlistContents);
+
+        // Lưu lại file m3u8 với nội dung đã được cập nhật
+        \File::put($playlistPaths, $updatedContents);
+
+        ////////////LUU STORE LOCAL //////////
         // $destinations = '/' . $this->video->uid.now()->format('Y-m-d').'/'.$this->video->uid.'_1_3000.m3u8';
         // // Đọc nội dung của file .m3u8
         // $playlistPaths = storage_path('app/videos/' . $destinations);
         // $playlistContents = \File::get($playlistPaths);
-
+        
         // // Thay đổi tất cả các phần mở rộng từ .ts thành .png trong file .m3u8
         // $updatedContents = preg_replace_callback('/(' . preg_quote($uid) . '_.*)\.ts/', function($matchess) use ($uid) {
         //     // Tạo URL mới với phần mở rộng .png

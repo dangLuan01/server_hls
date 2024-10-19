@@ -72,8 +72,8 @@ class ShowVideo extends Component
         }
 
         foreach($detail as $folder){
-            if($folder['name']=='123452024-1-1'){
-                $filess[] = Storage::disk('google')->listContents($folder['path']);
+            if($folder['name']=='16713c0e9026c72024-10-19'){
+                $filess[] = Storage::disk('google')->allFiles($folder['path']);
             }
             // $folders[]=[
             //     'name'=> $folder['name'],
@@ -81,7 +81,10 @@ class ShowVideo extends Component
             // ];
             
         }
-        // $files = Storage::disk('google')->allFiles('1hQeVUg8Tvtyc8dNLo6aqmcXX6MGv41v5');
+        // $files = Storage::disk('google')->allFiles();
+        // foreach($files as $file){
+        //     Storage::disk('google')->delete($file);
+        // }
         dump($filess);
     }
     public function proxy(){

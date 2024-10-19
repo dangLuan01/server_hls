@@ -41,6 +41,10 @@
                 <a class="collapse-item" href="{{ route('video.all') }}">All Video</a>
             </div>
         </div>
+        <a class="nav-link collapsed" href="{{ route('video.gdrive') }}">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Gdrive</span>
+        </a>
     </li>
    
 </ul>

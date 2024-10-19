@@ -38,8 +38,22 @@ class ShowVideo extends Component
             $fileName = $this->videoFile->getClientOriginalName();
             $filePath = $this->videoFile->getRealPath();
            
+            $files=Storage::disk('google')->directories();
+            //$firstFile=$file[0];
+            
+            foreach($files as $first){
+                $detail[] = Storage::disk('google')->getMetadata($first);
+                
+            }
+    
+            foreach($detail as $folder){
+                if($folder['name']=='123452024-1-1'){
+                    Storage::disk('google')->put($folder['path'].'/'.$fileName, fopen($filePath, 'r+'));
+                }
+                
+            }
             // Upload file lên Google Drive
-            Storage::disk('google')->put($fileName, fopen($filePath, 'r+'));
+            
 
             // Thông báo sau khi upload thành công
             session()->flash('message', 'Video uploaded successfully to Google Drive.');
@@ -49,13 +63,26 @@ class ShowVideo extends Component
     }
     public function showAll(){
         $this->gDrive();
-        $file=Storage::disk('google')->allFiles();
-        // $firstFile=$file[4];
-        foreach($file as $first){
-            $detail[] = Storage::disk('google')->url($first);
+         $files=Storage::disk('google')->directories();
+        //$firstFile=$file[0];
+        
+        foreach($files as $first){
+            $detail[] = Storage::disk('google')->getMetadata($first);
+            
         }
-       
-        dump($detail);
+
+        foreach($detail as $folder){
+            if($folder['name']=='123452024-1-1'){
+                $filess[] = Storage::disk('google')->listContents($folder['path']);
+            }
+            // $folders[]=[
+            //     'name'=> $folder['name'],
+            //     'id'=> $folder['path'],
+            // ];
+            
+        }
+        // $files = Storage::disk('google')->allFiles('1hQeVUg8Tvtyc8dNLo6aqmcXX6MGv41v5');
+        dump($filess);
     }
     public function proxy(){
         $file_id = $_GET['id'];
@@ -63,6 +90,9 @@ class ShowVideo extends Component
         $response = $client->get("https://drive.google.com/uc?id={$file_id}");
         // Xuất nội dung để stream
         echo $response->getBody();
+    }
+    public function stream(){
+        return view('livewire.video.stream');
     }
 
 }

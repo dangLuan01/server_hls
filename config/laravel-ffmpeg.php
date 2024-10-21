@@ -11,7 +11,7 @@ return [
         'binaries' => env('FFPROBE_BINARIES', 'ffprobe'),
     ],
 
-    'timeout' => 3600,
+    'timeout' => 10800,
 
     'enable_logging' => true,
 

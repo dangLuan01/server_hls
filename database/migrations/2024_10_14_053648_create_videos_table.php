@@ -20,6 +20,7 @@ class CreateVideosTable extends Migration
             $table->string('uid');
             $table->text('path')->nullable();
             $table->string('processed_file')->nullable();
+            $table->string('cloud')->default('0');
             $table->enum('visibility', ['public','private'])->default('public');
             $table->boolean('processed')->default(false);   
             $table->string('processing_precentage')->default(false);

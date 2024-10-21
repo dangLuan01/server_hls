@@ -43,7 +43,6 @@ class ShowVideo extends Component
             
             foreach($files as $first){
                 $detail[] = Storage::disk('google')->getMetadata($first);
-                
             }
     
             foreach($detail as $folder){
@@ -63,29 +62,52 @@ class ShowVideo extends Component
     }
     public function showAll(){
         $this->gDrive();
-         $files=Storage::disk('google')->directories();
-        //$firstFile=$file[0];
+        // $folders=Storage::disk('google')->directories();
+        // foreach($folders as $first){
+        //     $detail[] = Storage::disk('google')->getMetadata($first);
+        // }   
+        // $directoryVideo = storage_path('app/videos/16714aef79e74d2024-10-20');
+        // $files = \File::files($directoryVideo);
+        // foreach($detail as $folder){
+        //     if($folder['name'] == '16714aef79e74d2024-10-20'){
+        //         foreach ($files as $file) { 
+        //                 if($file->getExtension() === 'png'){
+        //                         // Lấy tên file và đường dẫn tạm thời của file
+        //                         $fileName = $file->getFilename();
+        //                         $filePath = $file->getRealPath();
+                               
+        //                         // Upload file lên Google Drive
+        //                         Storage::disk('google')->put($folder['path'].'/'.$fileName, fopen($filePath, 'r+'));
+        //                         sleep(1);
+        //                 }
+        //             }
+                   
+        //         }
+        //     }
+        //  $files=Storage::disk('google')->directories();
+        // //$firstFile=$file[0];
         
-        foreach($files as $first){
-            $detail[] = Storage::disk('google')->getMetadata($first);
+        // foreach($files as $first){
+        //     $detail[] = Storage::disk('google')->getMetadata($first);
             
-        }
-
-        foreach($detail as $folder){
-            if($folder['name']=='16713c0e9026c72024-10-19'){
-                $filess[] = Storage::disk('google')->allFiles($folder['path']);
-            }
-            // $folders[]=[
-            //     'name'=> $folder['name'],
-            //     'id'=> $folder['path'],
-            // ];
-            
-        }
-        // $files = Storage::disk('google')->allFiles();
-        // foreach($files as $file){
-        //     Storage::disk('google')->delete($file);
         // }
-        dump($filess);
+
+        // foreach($detail as $folder){
+        //     if($folder['name']=='16713c0e9026c72024-10-19'){
+        //         $filess[] = Storage::disk('google')->allFiles($folder['path']);
+        //     }
+        //     // $folders[]=[
+        //     //     'name'=> $folder['name'],
+        //     //     'id'=> $folder['path'],
+        //     // ];
+            
+        // }
+        // $files = Storage::disk('google')->allFiles('1HntGWT0BejDfnFGdNjkur4vSN8vx9UYC');
+        // foreach($files as $file){
+        //     $publicFile[] = Storage::disk('google')->url($file);
+        // }
+        $folder=Storage::disk('google')->directories('1L0fTrjRzh3o0ReTbo7ZprIbrJBScO1Zt');
+        dump($folder);
     }
     public function proxy(){
         $file_id = $_GET['id'];

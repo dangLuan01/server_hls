@@ -43,21 +43,13 @@ class ConvertVideoForStreaming implements ShouldQueue
         
 
         $veryhigh = (new X264('aac'))->setKiloBitrate(3500);
-        $high = (new X264('aac'))->setKiloBitrate(2500);
+        // $high = (new X264('aac'))->setKiloBitrate(2000);
 
         FFMpeg::fromDisk('videos-temp')
-
         ->open($this->video->path)
-
         ->exportForHLS()
-        ->addFormat($high,function($filters){
-            $filters->resize(1280,720);
-        })
-        ->addFormat($veryhigh,function($filters){
-            $filters->resize(1920,1080);
-        })
+        ->addFormat($veryhigh)
         ->toDisk('videos')
-
         ->onProgress(function($progress){
 
            $this->video->update([
@@ -77,7 +69,13 @@ class ConvertVideoForStreaming implements ShouldQueue
 
            ]);
         $this->renameTsToPng($this->video->uid,$folderVideo);
+        $this->video->update([
+            'cloud' => '1'
+        ]);
         $this->saveToGdrive($folderVideo,$this->video->uid);
+        $this->video->update([
+            'cloud' => '2'
+        ]);
         Storage::disk('videos-temp')->delete($this->video->path);
         $files = Storage::disk('local')->files('livewire-tmp');
            
@@ -110,19 +108,18 @@ class ConvertVideoForStreaming implements ShouldQueue
                 $folderPath = $folder['path'];
                 foreach ($files as $file) {
                     if ($file->getExtension() === 'png') {
-
                            // Lấy tên file và đường dẫn tạm thời của file
                            $fileName = $file->getFilename();
                            $filePath = $file->getRealPath();
                           
                            // Upload file lên Google Drive
                            Storage::disk('google')->put($folder['path'].'/'.$fileName, fopen($filePath, 'r+'));
-               
+                           sleep(1);
                     }
                 }
-                
             }
         }
+        sleep(2);
         $this->updateM3U8Playlist($uid,$folderVideo,$folderPath);
         
     }
@@ -148,7 +145,7 @@ class ConvertVideoForStreaming implements ShouldQueue
     public function updateM3U8Playlist($uid,$folderVideo,$folderPath)
     {
         $this->gDrive();
-        $destination = '/' . $folderVideo.'/'.$this->video->uid.'_0_2500.m3u8';
+        $destination = '/' . $folderVideo.'/'.$this->video->uid.'_0_3500.m3u8';
         // Đọc nội dung của file .m3u8
         $playlistPath = storage_path('app/videos/' . $destination);
         $playlistContent = \File::get($playlistPath);
@@ -170,31 +167,21 @@ class ConvertVideoForStreaming implements ShouldQueue
         // Lưu lại file m3u8 với nội dung đã được cập nhật
         \File::put($playlistPath, $updatedContent);
         // PUBLIC FILE
-        $filess=Storage::disk('google')->allFiles($folderPath);
-        foreach($filess as $first){
-           Storage::disk('google')->url($first);
-        }
-        ///////////////////******************************//////////////////////////
-        $destinations = '/' . $folderVideo.'/'.$this->video->uid.'_1_3500.m3u8';
-        // Đọc nội dung của file .m3u8
-        $playlistPaths = storage_path('app/videos/' . $destinations);
-        $playlistContents = \File::get($playlistPaths);
+        Storage::disk('google')->url($folderPath);
+        
+        ///////////////////*********LUU CLOUD GDRIVE********//////////////////////////
+        // $destinations = '/' . $folderVideo.'/'.$this->video->uid.'_1_3500.m3u8';
+        // $playlistPaths = storage_path('app/videos/' . $destinations);
+        // $playlistContents = \File::get($playlistPaths);
 
-        // Thay đổi tất cả các phần mở rộng từ .ts thành .png trong file .m3u8
-        $updatedContents = preg_replace_callback('/(' . preg_quote($uid) . '_.*)\.ts/', function($matchess) use ($files) {
-            
-            foreach ($files as $file) {
-                // Kiểm tra nếu tên file từ Google Drive khớp với đoạn tìm kiếm từ .m3u8
-                if (strpos($file['name'], $matchess[1]) !== false) {
-                    // Tạo URL mới với tên file tương ứng
-                    return 'http://127.0.0.1:8000/proxy?id=' . urlencode($file['basename']);
-                }
-            }
-          
-        }, $playlistContents);
-
-        // Lưu lại file m3u8 với nội dung đã được cập nhật
-        \File::put($playlistPaths, $updatedContents);
+        // $updatedContents = preg_replace_callback('/(' . preg_quote($uid) . '_.*)\.ts/', function($matchess) use ($files) {
+        //     foreach ($files as $file) {
+        //         if (strpos($file['name'], $matchess[1]) !== false) {
+        //             return 'http://127.0.0.1:8000/proxy?id=' . urlencode($file['basename']);
+        //         }
+        //     }
+        // }, $playlistContents);
+        // \File::put($playlistPaths, $updatedContents);
 
         ////////////LUU STORE LOCAL //////////
         // $destinations = '/' . $this->video->uid.now()->format('Y-m-d').'/'.$this->video->uid.'_1_3000.m3u8';

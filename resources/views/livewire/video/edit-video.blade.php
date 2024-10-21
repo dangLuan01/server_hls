@@ -1,8 +1,8 @@
-<div @if ($video->processing_precentage < 100) wire:poll @endif class="container">
+<div @if ($video->cloud <= 1) wire:poll @endif class="container">
 
         <form wire:submit.prevent="update">
             <div class="mb-3">
-                <label for="exampleFormControlInput1" class="form-label">@if($this->video->processing_precentage <100)
+                <label for="exampleFormControlInput1" class="form-label">@if($this->video->processing_precentage < 100)
                         EnCodeing @else Encoded @endif</label>
                         <div class="row no-gutters align-items-center">
                             <div class="col-auto">
@@ -17,6 +17,15 @@
                             </div>
                         </div>
             </div>
+            @if($video->cloud == 1)
+            <div class="mb-3">
+                <label class="form-label">Uploading Gdrive</label>
+            </div>
+            @elseif($video->cloud == 2)
+            <div class="mb-3">
+                <label class="form-label">Uploaded Success</label>
+            </div> 
+            @endif
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Name</label>
                 <input type="text" class="form-control form-control-sm" id="exampleFormControlInput1"

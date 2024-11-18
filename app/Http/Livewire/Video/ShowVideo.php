@@ -34,25 +34,29 @@ class ShowVideo extends Component
          $this->gDrive();
          // Kiểm tra nếu có file upload
          if ($this->videoFile) {
-            // Lấy tên file và đường dẫn tạm thời của file
-            $fileName = $this->videoFile->getClientOriginalName();
-            $filePath = $this->videoFile->getRealPath();
+            // // Lấy tên file và đường dẫn tạm thời của file
+            // $fileName = $this->videoFile->getClientOriginalName();
+            // $filePath = $this->videoFile->getRealPath();
            
-            $files=Storage::disk('google')->directories();
-            //$firstFile=$file[0];
+            // $files=Storage::disk('google')->directories();
+            // //$firstFile=$file[0];
             
-            foreach($files as $first){
-                $detail[] = Storage::disk('google')->getMetadata($first);
-            }
+            // foreach($files as $first){
+            //     $detail[] = Storage::disk('google')->getMetadata($first);
+            // }
     
-            foreach($detail as $folder){
-                if($folder['name']=='123452024-1-1'){
-                    Storage::disk('google')->put($folder['path'].'/'.$fileName, fopen($filePath, 'r+'));
-                }
+            // foreach($detail as $folder){
+            //     if($folder['name']=='123452024-1-1'){
+            //         Storage::disk('google')->put($folder['path'].'/'.$fileName, fopen($filePath, 'r+'));
+            //     }
                 
-            }
+            // }
             // Upload file lên Google Drive
-            
+            $fileName = $this->videoFile->getClientOriginalName();
+            $filePath =  $this->videoFile->getRealPath();
+           
+            // Upload file lên Google Drive
+            Storage::disk('google')->put($fileName, fopen($filePath, 'r+'));
 
             // Thông báo sau khi upload thành công
             session()->flash('message', 'Video uploaded successfully to Google Drive.');
